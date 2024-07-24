@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const { options } = require("../routes/user");
 require("dotenv").config;
 
 exports.signup = async (req,res) =>{
@@ -47,14 +48,14 @@ exports.signup = async (req,res) =>{
 exports.login = async (req,res) =>{
     try{
         const {email, password} = req.body;
-        if(email === "" || password === ""){
+        if(!email || !password ){
             return res.status(400).json({
                 success:false,
                 message:"fill all the credentials properly"
             })
         }
 
-        const userExists = await User.findOne({email});
+        let userExists = await User.findOne({email});
         if(!userExists){
             return res.status(400).json({
                 success:false,
